@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>International Seminar Registration</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Kalam:wght@300&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url('bgimg.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            font-family: 'Kalam', sans-serif; 
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-family: 'Sacramento', cursive; 
+        }
+
+        form {
+            background-color: rgb(250, 249, 246);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+
+        button[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+
+        #registrationSummary {
+            background-color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+    </style>
+    <script>
+        function updateFees() {
+            var currency = document.querySelector('input[name="currency"]:checked').value;
+            var feesField = document.getElementById('fees');
+
+            // Define base registration fees for Dollars and Rupees
+            var baseFees = {
+                dollars: {
+                    basic: 100,
+                    hotel1: 200,
+                    hotel2: 300,
+                    hotel3: 400,
+                    hotel4: 500
+                },
+                rupees: {
+                    basic: 8400,
+                    hotel1: 16800,
+                    hotel2: 25200,
+                    hotel3: 33600,
+                    hotel4: 42000
+                }
+            };
+
+            var selectedHotel = document.getElementById('accommodation').value;
+            var additionalServices = document.querySelectorAll('input[name="services[]"]:checked');
+            var additionalServicesFee = 0;
+
+            // Calculate the additional services fee based on currency
+            additionalServices.forEach(function(service) {
+                if (service.value === 'wifi') {
+                    if (currency === 'rupees') {
+                        additionalServicesFee += 50;
+                    } else {
+                        additionalServicesFee += 1;
+                    }
+                } else if (service.value === 'breakfast') {
+                    if (currency === 'rupees') {
+                        additionalServicesFee += 100;
+                    } else {
+                        additionalServicesFee += 2;
+                    }
+                } else if (service.value === 'gym') {
+                    if (currency === 'rupees') {
+                        additionalServicesFee += 200;
+                    } else {
+                        additionalServicesFee += 3;
+                    }
+                } else if (service.value === 'pool') {
+                    if (currency === 'rupees') {
+                        additionalServicesFee += 150;
+                    } else {
+                        additionalServicesFee += 2.5;
+                    }
+                } else if (service.value === 'shuttle') {
+                    if (currency === 'rupees') {
+                        additionalServicesFee += 300;
+                    } else {
+                        additionalServicesFee += 5;
+                    }
+                }
+            });
+
+            // Calculate and set the total fee
+            var totalFee = baseFees[currency][selectedHotel] + additionalServicesFee;
+            feesField.value = totalFee.toFixed(2);
+        }
+
+        // Function to handle form submission
+        function submitForm(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get form elements
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var phoneNumber = document.getElementById('Phone Number').value;
+            var status = document.getElementById('status').value;
+            var accommodation = document.getElementById('accommodation').value;
+
+            // Get selected additional services
+            var additionalServices = [];
+            var selectedServices = document.querySelectorAll('input[name="services[]"]:checked');
+            selectedServices.forEach(function(service) {
+                additionalServices.push(service.value);
+            });
+
+            // Get selected currency
+            var currency = document.querySelector('input[name="currency"]:checked').value;
+
+            // Get registration fees
+            var fees = document.getElementById('fees').value;
+
+            // Get selected payment method
+            var paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            // Create a summary message
+            var summaryMessage = "Registration Summary:\n" +
+                "Name: " + name + "\n" +
+                "Email: " + email + "\n" +
+                "Phone Number: " + phoneNumber + "\n" +
+                "Status: " + status + "\n" +
+                "Accommodation: " + accommodation + "\n" +
+                "Additional Services: " + additionalServices.join(', ') + "\n" +
+                "Currency: " + currency + "\n" +
+                "Registration Fees: " + fees + "\n" +
+                "Payment Method: " + paymentMethod;
+
+            // Display the summary message (you can modify this part as needed)
+            alert(summaryMessage);
+        }
+    </script>
+</head>
+<body>
+    <h1>International Seminar Registration</h1>
+    <form action="process_registration.php" method="post" onsubmit="submitForm(event)">
+        <h2>Participant Information</h2>
+        <br>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required >
+        <br>
+        <br>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required value="johndoe@example.com" placeholder="example@example.com">
+        <br>
+        <br>
+
+        <label for="Phone Number">Phone Number:</label>
+        <input type="tel" id="Phone Number" name="Phone Number" required placeholder="Enter Phone Number" >
+        <br>
+        <br>
+        
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="student">Student</option>
+            <option value="faculty">Faculty</option>
+            <option value="professional">Professional</option>
+            <option value="representative">Company/Firm Representative</option>
+        </select>
+        <br>
+        <br>
+
+        <label for="accommodation">Accommodation:</label>
+        <select id="accommodation" name="accommodation" onchange="updateFees()">
+            <option value="basic">Basic</option>
+            <option value="hotel1">Hotel 1 (with services)</option>
+            <option value="hotel2">Hotel 2 (with services)</option>
+            <option value="hotel3">Hotel 3 (with services)</option>
+            <option value="hotel4">Hotel 4 (with services)</option>
+        </select>
+        <br>
+        <br>
+
+        <!-- Additional services checkboxes -->
+        <label>Additional Services:</label><br>
+        <input type="checkbox" id="wifi" name="services[]" value="wifi" onclick="updateFees()">
+        <label for="wifi">Wi-Fi (+₹50 or $1)</label><br>
+        <input type="checkbox" id="breakfast" name="services[]" value="breakfast" onclick="updateFees()">
+        <label for="breakfast">Breakfast (+₹100 or $2)</label><br>
+        <input type="checkbox" id="gym" name="services[]" value="gym" onclick="updateFees()">
+        <label for="gym">Gym Access (+₹200 or $3)</label><br>
+        <input type="checkbox" id="pool" name="services[]" value="pool" onclick="updateFees()">
+        <label for="pool">Swimming Pool (+₹150 or $2.5)</label><br>
+        <input type="checkbox" id="shuttle" name="services[]" value="shuttle" onclick="updateFees()">
+        <label for="shuttle">Shuttle Service (+₹300 or $5)</label><br>
+        <input type="checkbox" id="conferenceDinner" name="services[]" value="conferenceDinner" onclick="updateFees()">
+        <label for="conferenceDinner">Conference Dinner (+₹250 or $4)</label><br>
+        <br>
+        <!-- Add more services here with their corresponding checkboxes -->
+        
+ 
+        <label>Currency:</label>
+        <input type="radio" id="rupees" name="currency" value="rupees" checked onclick="updateFees()">
+        <label for="rupees">Rupees</label>
+        <input type="radio" id="dollars" name="currency" value="dollars" onclick="updateFees()">
+        <label for="dollars">Dollars</label>
+        <br>
+        <br>
+
+        <!-- Registration Fees -->
+        <label for="fees">Registration Fees:</label>
+        <input type="number" id="fees" name="fees" step="0.01" required disabled>
+        <br>
+        <br>
+        
+        
+        <label>Payment Method:</label><br>
+        <input type="radio" id="creditCard" name="paymentMethod" value="creditCard">
+        <label for="creditCard">Credit Card</label><br>
+        <input type="radio" id="debitCard" name="paymentMethod" value="debitCard">
+        <label for="debitCard">Debit Card</label><br>
+        <input type="radio" id="demandDraft" name="paymentMethod" value="demandDraft">
+        <label for="demandDraft">Demand Draft</label><br>
+        <br>
+
+        <button type="submit">Register</button>
+        
+    </form>
+</body>
+</html>
